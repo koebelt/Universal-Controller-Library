@@ -37,43 +37,43 @@
 /********************* End of Radio Declarations ******************************/
 
 
-void listener(void) {
-  radio.startListening();
-  if (radio.available()) {
-    while (radio.available()) {
-      radio.read(&remoteData, sizeof(remoteData_t));
-      // Serial.println(" Received data");
-    }
-    // remoteData = (remoteData_t)malloc(sizeof(remoteData_t));
-    delay(20);
-  }
-}
+// void listener(void) {
+//   radio.startListening();
+//   if (radio.available()) {
+//     while (radio.available()) {
+//       radio.read(&remoteData, sizeof(remoteData_t));
+//       // Serial.println(" Received data");
+//     }
+//     // remoteData = (remoteData_t)malloc(sizeof(remoteData_t));
+//     delay(20);
+//   }
+// }
 
-bool send(char const *message)
-{
-  return radio.write(message, sizeof(char) * 32);
-}
+// bool send(char const *message)
+// {
+//   return radio.write(message, sizeof(char) * 32);
+// }
+My_library receiver;
 
 void setup() {
-  Serial.begin(9600);
-
+    Serial.begin(9600);
   /* Radio initialisation */
-  if (!radio.begin())
-    Serial.println("Radio initialisation failed");
-  else
-    Serial.println("Radio initialisation success");
-  // radio.setChannel(0);
-  radio.setPALevel(RF24_PA_MIN);
-  // radio.setDataRate(RF24_250KBPS);
-  radio.openWritingPipe(adresses[0]);
-  // radio.openReadingPipe(0, adresses[0]);
-  radio.openReadingPipe(1, adresses[1]);
-  radio.openReadingPipe(2, adresses[2]);
-  radio.openReadingPipe(3, adresses[3]);
-  radio.openReadingPipe(4, adresses[4]);
-  radio.openReadingPipe(5, adresses[5]);
-  radio.startListening();
-  /* End of Radio Initialisation */
+//   if (!radio.begin())
+//     Serial.println("Radio initialisation failed");
+//   else
+//     Serial.println("Radio initialisation success");
+//   // radio.setChannel(0);
+//   radio.setPALevel(RF24_PA_MIN);
+//   // radio.setDataRate(RF24_250KBPS);
+//   radio.openWritingPipe(adresses[0]);
+//   // radio.openReadingPipe(0, adresses[0]);
+//   radio.openReadingPipe(1, adresses[1]);
+//   radio.openReadingPipe(2, adresses[2]);
+//   radio.openReadingPipe(3, adresses[3]);
+//   radio.openReadingPipe(4, adresses[4]);
+//   radio.openReadingPipe(5, adresses[5]);
+//   radio.startListening();
+//   /* End of Radio Initialisation */
   // put your setup code here, to run once:
 }
 
@@ -92,27 +92,24 @@ void loop() {
   //   Serial.print("Received data: ");
   //   Serial.println(message);  
   // }
-  listener();
-  delay(5);
+  receiver._radio.listener();
   Serial.print("lX: ");
-  Serial.print(remoteData.ljoystick.x);
+  Serial.print(receiver._remoteData.ljoystick.x);
   Serial.print(" lY: ");
-  Serial.print(remoteData.ljoystick.y);
+  Serial.print(receiver._remoteData.ljoystick.y);
   Serial.print(" rX: ");
-  Serial.print(remoteData.rjoystick.x);
+  Serial.print(receiver._remoteData.rjoystick.x);
   Serial.print(" rY: ");
-  Serial.print(remoteData.rjoystick.y);
+  Serial.print(receiver._remoteData.rjoystick.y);
   Serial.print(" b1: ");
-  Serial.print(remoteData.button1);
+  Serial.print(receiver._remoteData.button1);
   Serial.print(" b2: ");
-  Serial.print(remoteData.button2);
+  Serial.print(receiver._remoteData.button2);
   Serial.print(" b3: ");
-  Serial.print(remoteData.button3);
+  Serial.print(receiver._remoteData.button3);
   Serial.print(" b4: ");
-  Serial.println(remoteData.button4);
-  radio.stopListening();
-  send("message");
-  delay(5);
+  Serial.println(receiver._remoteData.button4);
+  receiver._radio.send("message");
   // Serial.write(12);
   // put your main code here, to run repeatedly:
 }

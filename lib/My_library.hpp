@@ -21,61 +21,46 @@
     #define tunnel5 "PIPE5"
     #define tunnel6 "PIPE6"
 
-    // void listener(void) {
-    //     radio.startListening();
-    //     if (radio.available()) {
-    //         while (radio.available()) {
-    //         radio.read(&remoteData, sizeof(remoteData_t));
-    //         // Serial.println(" Received data");
-    //         }
-    //         // remoteData = (remoteData_t)malloc(sizeof(remoteData_t));
-    //         delay(20);
-    //     }
-    // }
+    typedef struct joystick {
+        int x;
+        int y;
+    } joystick_t;
 
-    // bool send(char const *message) {
-    //     return radio.write(message, sizeof(char) * 32);
-    // }
+    typedef struct remoteData {
+        joystick_t ljoystick;
+        joystick_t rjoystick;
+        byte button1;
+        byte button2;
+        byte button3;
+        byte button4;
+    } remoteData_t;
 
+    const byte adresses[][6] = {tunnel1, tunnel2, tunnel3, tunnel4, tunnel5, tunnel6};
+
+    class Radio : My_library {
+        public:
+            Radio() { _communicate = RF24(pinCE, pinCSN, 4000000); };
+            ~Radio() = default;
+
+            void listener(void) {
+                delay(5);
+                _communicate.startListening();
+                    if (_communicate.available()) {
+                        while (_communicate.available())
+                            _communicate.read(&_remoteData, sizeof(remoteData_t));
+                        delay(20);
+                    }
+                delay(5);
+            };
+            bool send(char const *message) { _communicate.stopListening(); return _communicate.write(message, sizeof(char) * 32); };
+
+            RF24 _communicate;
+    };
 
     class My_library {
         public:
-            class Radio {
-                public:
-                    Radio() { _communicate = RF24(pinCE, pinCSN, 4000000); };
-                    ~Radio();
-                    void listener(void) {
-                        _communicate.startListening();
-                            if (_communicate.available()) {
-                                while (_communicate.available()) {
-                                    _communicate.read(&remoteData, sizeof(remoteData_t));
-                                    // Serial.println(" Received data");
-                                }
-                                // remoteData = (remoteData_t)malloc(sizeof(remoteData_t));
-                                delay(20);
-                            }
-                    };
-                    bool send(char const *message);
-
-                    RF24 _communicate;
-            };
-
-            My_library() { _remoteData = {{0, 0}, {0, 0}, 0, 0, 0, 0}; };
-            ~My_library();
-
-            typedef struct joystick {
-                int x;
-                int y;
-            } joystick_t;
-
-            typedef struct remoteData {
-                joystick_t ljoystick;
-                joystick_t rjoystick;
-                byte button1;
-                byte button2;
-                byte button3;
-                byte button4;
-            } remoteData_t;
+            My_library();
+            ~My_library() = default;
 
             remoteData_t _remoteData;
             Radio _radio;
