@@ -32,9 +32,8 @@
 
     class My_library {
         public:
-            My_library() {Serial.print("Default constructor");};
+            My_library() {};
             My_library(int pinCE, int pinCSN) {
-                Serial.print("start");
                 _radio = RF24(pinCE, pinCSN, 4000000);
                 _remoteData = {{0, 0}, {0, 0}, 0, 0, 0, 0};
                 !_radio.begin() ? Serial.println("Radio initialisation failed") : Serial.println("Radio initialisation success");
@@ -42,7 +41,8 @@
                 //     Serial.println("Radio initialisation failed");
                 // else
                 //     Serial.println("Radio initialisation success");
-                _radio.setPALevel(RF24_PA_MIN);
+                _radio.setPALevel(RF24_PA_HIGH);
+                _radio.setDataRate(RF24_250KBPS);
                 _radio.openWritingPipe(adresses[0]);
                 _radio.openReadingPipe(1, adresses[1]);
                 _radio.openReadingPipe(2, adresses[2]);
@@ -68,17 +68,28 @@
             };
 
             void listener(void) {
-                delay(5);
-                _radio.startListening();
-                    if (_radio.available()) {
-                        while (_radio.available())
-                            _radio.read(&_remoteData, sizeof(struct remoteData));
-                        delay(20);
-                    }
-                delay(5);
+                unsigned long time = millis();
+                if (time - _stopMillis >= 1) {
+                    _radio.startListening();
+                    _startMillis = millis();
+                        if (_radio.available()) {
+                            while (_radio.available())
+                                _radio.read(&_remoteData, sizeof(struct remoteData));
+                        }
+                }
             };
-            bool send(char const *message) { _radio.stopListening(); return _radio.write(message, sizeof(char) * 32); };
+            bool send(char const *message) {
+                unsigned long time = millis();
+                if (time - _startMillis >= 1) {
+                    _radio.stopListening();
+                    _stopMillis = millis();
+                    return _radio.write(message, sizeof(char) * 32);
+                }
+                return false;
+            };
 
+            unsigned long _startMillis;
+            unsigned long _stopMillis;
             struct remoteData _remoteData;
             RF24 _radio;
     };
