@@ -88,6 +88,8 @@
                 return false;
             };
 
+            RF24 getLegacyRadio(void) { return _radio; };
+
             unsigned long _startMillis;
             unsigned long _stopMillis;
             struct remoteData _remoteData;
