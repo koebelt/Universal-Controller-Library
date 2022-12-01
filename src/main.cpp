@@ -1,7 +1,7 @@
 // #include <Arduino.h>
-// #include <SPI.h>
+#include <SPI.h>
 // #include <RF24.h>
-#include "../lib/My_library.hpp"
+#include "../lib/My_library.h"
 
 // /************************** Radio Declarations ********************************/
 
@@ -92,7 +92,7 @@ void loop() {
   //   Serial.print("Received data: ");
   //   Serial.println(message);  
   // }
-  receiver._radio.listener();
+  receiver.listener();
   Serial.print("lX: ");
   Serial.print(receiver._remoteData.ljoystick.x);
   Serial.print(" lY: ");
@@ -109,7 +109,7 @@ void loop() {
   Serial.print(receiver._remoteData.button3);
   Serial.print(" b4: ");
   Serial.println(receiver._remoteData.button4);
-  receiver._radio.send("message");
+  receiver.send("message");
   // Serial.write(12);
   // put your main code here, to run repeatedly:
 }
