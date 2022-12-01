@@ -12,8 +12,6 @@
     #include <SPI.h>
     #include <RF24.h>
 
-    #define pinCE 7
-    #define pinCSN 8
     #define tunnel1 "PIPE2"
     #define tunnel2 "PIPE1"
     #define tunnel3 "PIPE3"
@@ -34,7 +32,9 @@
 
     class My_library {
         public:
-            My_library() {
+            My_library() {Serial.print("Default constructor");};
+            My_library(int pinCE, int pinCSN) {
+                Serial.print("start");
                 _radio = RF24(pinCE, pinCSN, 4000000);
                 _remoteData = {{0, 0}, {0, 0}, 0, 0, 0, 0};
                 !_radio.begin() ? Serial.println("Radio initialisation failed") : Serial.println("Radio initialisation success");

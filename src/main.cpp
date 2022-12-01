@@ -57,6 +57,7 @@ My_library receiver;
 
 void setup() {
     Serial.begin(9600);
+    receiver = My_library(7, 8);
   /* Radio initialisation */
 //   if (!radio.begin())
 //     Serial.println("Radio initialisation failed");
